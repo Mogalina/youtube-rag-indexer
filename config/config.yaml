@@ -1,0 +1,35 @@
+summary:
+  # HuggingFace model for the transcript summary model
+  model_id: "google/flan-t5-small"
+  # Local directory where the model will be cached after download
+  local_model_dir: "./models/flan-t5-small"
+  # Number of texts to summarize in a single forward pass
+  batch_size: 32
+
+embedding:
+  # HuggingFace model for the transcript summary embedding model
+  model_id: "google/embeddinggemma-300m"
+  # Local directory where the model will be cached after download
+  local_model_dir: "./models/embeddinggemma-300m"
+  # Number of texts to embed in a single forward pass
+  batch_size: 32
+
+database:
+  # Directory where the index and metadata are stored
+  path: "./data/faiss_index"
+  # Maximum allowed size of the index on disk
+  max_size_gb: 10
+
+chunking:
+  # Maximum number of tokens per transcript chunk
+  max_tokens: 512
+  # Number of overlapping tokens between consecutive chunks
+  overlap_tokens: 64
+
+pipeline:
+  # Number of parallel worker threads
+  num_workers: 4
+  # SQLite database path for the job queue
+  queue_db: "./data/queue.db"
+  # Seconds to wait between queue polls when idle
+  poll_interval_sec: 5
