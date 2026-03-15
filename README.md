@@ -10,16 +10,6 @@ The project is designed for researchers, developers, and content analysts who ne
 
 Public video platforms produce an enormous volume of spoken information. YouTube alone hosts hundreds of millions of hours of content across lectures, technical talks, interviews, and tutorials. Despite this, the content remains largely unsearchable at a semantic level. YouTube Indexer addresses this gap by providing a lightweight, extensible indexing pipeline that converts spoken content into dense vector embeddings amenable to similarity search.
 
-## Architecture
-
-The pipeline operates as a multi-stage, parallelized processing system:
-
-1. A crash-safe SQLite job queue accepts YouTube URLs and tracks processing state across restarts.
-2. A configurable thread pool runner continuously polls the queue and dispatches jobs to worker threads.
-3. Each worker fetches the video transcript, summarizes it with **FLAN-T5-small**, embeds the result with **embedding-gemma-300m**, and appends the vectors to a **FAISS** index with accompanying metadata.
-
-All components are configured through a single YAML file. Model inference supports `MPS` (Apple Silicon), `CUDA` (NVIDIA GPU), and `CPU` backends via automatic device selection.
-
 ## Installation
 
 ```bash
@@ -62,10 +52,6 @@ tubx run
 ```
 
 Loads the summarization and embedding models into memory once, then continuously processes queued jobs using a configurable thread pool.
-
-## Configuration
-
-All runtime parameters are controlled via `config/config.yaml`. Key sections include pipeline worker count, polling interval, model identifiers, chunking parameters, **FAISS** index storage path, maximum index size, and log rotation settings.
 
 ## Requirements
 
