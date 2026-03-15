@@ -4,8 +4,8 @@ from typing import Union
 import torch
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 
-from logger import get_logger
-from config import load_config
+from utils.logger import get_logger
+from utils.config import load_config
 
 
 logger = get_logger(__name__)
@@ -53,7 +53,7 @@ class Summarizer:
     def _chunk_words(
         self, 
         text: str, 
-        max_words: int = self.max_tokens
+        max_words: int | None = None
     ) -> list[str]:
         """
         Split text into word-based chunks safe for the model's token limit.
@@ -65,6 +65,9 @@ class Summarizer:
         Returns:
             List of word-based chunks
         """
+        if max_words is None:
+            max_words = self.max_tokens
+            
         words = text.split()
         
         chunks = []

@@ -2,13 +2,13 @@ import pickle
 import faiss
 import numpy as np
 
-from logger import get_logger
-from config import load_config, PROJECT_ROOT
+from utils.logger import get_logger
+from utils.config import load_config, PROJECT_ROOT
 from pipeline.queue import JobQueue, STATUS_DONE, STATUS_FAILED
 from pipeline.summarizer import Summarizer
 from pipeline.embedder import Embedder
 
-from youtube import get_video_id, get_full_transcript
+from utils.youtube import get_video_id, get_transcript
 
 
 logger = get_logger(__name__)
@@ -133,7 +133,7 @@ def process_job(
         # Fetch transcript
         queue.update_job(job_id, "processing", step="fetching")
         logger.info(f"Job {job_id} fetching transcript: {url}")
-        transcript = get_full_transcript(url, language="en")
+        transcript = get_transcript(url, language="en")
         video_id = get_video_id(url)
         queue.set_video_id(job_id, video_id)
 

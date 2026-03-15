@@ -5,8 +5,8 @@ import time
 
 from concurrent.futures import ThreadPoolExecutor, Future
 
-from logger import get_logger, setup_logger
-from config import load_config
+from utils.logger import get_logger, setup_logger
+from utils.config import load_config
 from pipeline.queue import JobQueue
 from pipeline.summarizer import Summarizer
 from pipeline.embedder import Embedder

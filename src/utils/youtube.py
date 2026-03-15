@@ -16,7 +16,7 @@ def get_video_id(url: str) -> str:
     return query["v"][0]
 
 
-def get_full_transcript(url: str, language: str = "en") -> str:
+def get_transcript(url: str, language: str = "en") -> str:
     """
     Get the full transcript of a YouTube video.
 

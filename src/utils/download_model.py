@@ -1,8 +1,8 @@
 from pathlib import Path
 from huggingface_hub import snapshot_download
 
-from logger import get_logger
-from config import load_config
+from utils.logger import get_logger
+from .config import load_config
 
 
 logger = get_logger(__name__)

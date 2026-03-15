@@ -6,8 +6,8 @@ import torch
 
 from transformers import AutoModel, AutoTokenizer
 
-from logger import get_logger
-from config import load_config
+from utils.logger import get_logger
+from utils.config import load_config
 
 
 logger = get_logger(__name__)
