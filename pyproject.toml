@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube-rag-indexer"
+version = "0.1.0"
+description = "YouTube Video Indexer Pipeline"
+readme = "README.md"
+authors = [
+    { name = "Mogalina" }
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "loguru",
+    "huggingface_hub",
+    "youtube-transcript-api",
+    "PyYAML",
+    "transformers",
+    "torch",
+    "faiss-cpu",
+    "numpy",
+    "rich"
+]
+
+[project.scripts]
+tubx = "cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
