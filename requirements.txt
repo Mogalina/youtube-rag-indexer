@@ -1,0 +1,8 @@
+loguru
+huggingface_hub
+youtube-transcript-api
+PyYAML
+transformers
+torch
+faiss-cpu
+numpy
