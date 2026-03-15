@@ -72,8 +72,3 @@ All runtime parameters are controlled via `config/config.yaml`. Key sections inc
 - `Python` 3.10 or later
 - `PyTorch` (with optional `MPS` or `CUDA` support)
 - Internet access for initial transcript fetching and model downloading (local model caching supported thereafter)
-
-## Documentation
-
-- [Architecture](docs/architecture.md) — component design, data flow, concurrency model, and storage layout
-- [Workflow](docs/workflow.md) — end-to-end job lifecycle, processing steps, model details, and performance reference
