@@ -5,6 +5,10 @@ summary:
   local_model_dir: "./models/flan-t5-small"
   # Number of texts to summarize in a single forward pass
   batch_size: 32
+  # Number of texts to summarize in a single forward pass
+  max_tokens: 512
+  # Number of tokens to keep from the summary
+  summary_max_tokens: 128
 
 embedding:
   # HuggingFace model for the transcript summary embedding model
@@ -13,6 +17,10 @@ embedding:
   local_model_dir: "./models/embeddinggemma-300m"
   # Number of texts to embed in a single forward pass
   batch_size: 32
+  # Number of tokens to keep from the summary
+  max_tokens: 512
+  # Number of tokens to keep from the summary
+  summary_max_tokens: 128
 
 database:
   # Directory where the index and metadata are stored
@@ -29,7 +37,7 @@ chunking:
 pipeline:
   # Number of parallel worker threads
   num_workers: 4
-  # SQLite database path for the job queue
+  # Database path for the job queue
   queue_db: "./data/queue.db"
   # Seconds to wait between queue polls when idle
   poll_interval_sec: 5
