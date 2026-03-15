@@ -17,7 +17,13 @@ def cmd_add(args, config: dict) -> None:
         args: Command-line arguments
         config: Configuration dictionary
     """
-    setup_logger(level="INFO", format_type="text")
+    logging_config = config.get("logging", {})
+    setup_logger(
+        level=logging_config.get("level", "INFO"),
+        log_file=logging_config.get("log_file"),
+        rotation=logging_config.get("rotation", "100 MB"),
+        retention=logging_config.get("retention", "30 days"),
+    )
     queue = get_queue(config)
 
     for url in args.urls:
@@ -36,7 +42,13 @@ def cmd_status(args, config: dict) -> None:
         args: Command-line arguments
         config: Configuration dictionary
     """
-    setup_logger(level="INFO", format_type="text")
+    logging_config = config.get("logging", {})
+    setup_logger(
+        level=logging_config.get("level", "INFO"),
+        log_file=logging_config.get("log_file"),
+        rotation=logging_config.get("rotation", "100 MB"),
+        retention=logging_config.get("retention", "30 days"),
+    )
     queue = get_queue(config)
     jobs = queue.get_all()
     print_status(jobs)
@@ -50,10 +62,16 @@ def cmd_run(args, config: dict) -> None:
         args: Command-line arguments
         config: Configuration dictionary
     """
-    setup_logger(level="INFO", format_type="text")
+    logging_config = config.get("logging", {})
+    setup_logger(
+        level=logging_config.get("level", "INFO"),
+        log_file=logging_config.get("log_file"),
+        rotation=logging_config.get("rotation", "100 MB"),
+        retention=logging_config.get("retention", "30 days"),
+    )
     runner = Runner()
     runner.start()
-    runner.wait()   
+    runner.wait()
 
 
 def main() -> None:

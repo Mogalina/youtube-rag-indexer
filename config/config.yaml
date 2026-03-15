@@ -41,3 +41,13 @@ pipeline:
   queue_db: "./data/queue.db"
   # Seconds to wait between queue polls when idle
   poll_interval_sec: 5
+
+logging:
+  # Path to the log file relative to project root
+  log_file: "./logs/tubx.log"
+  # Maximum circular log file size before rotation
+  rotation: "100 MB"
+  # How long to keep rotated log archives
+  retention: "30 days"
+  # Minimum log level to record
+  level: "INFO"

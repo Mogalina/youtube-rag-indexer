@@ -1,8 +1,10 @@
-import sys
-
 from pathlib import Path
 from loguru import logger
 from typing import Optional
+
+
+# Default log file path (relative to project root)
+_DEFAULT_LOG_FILE = "logs/tubx.log"
 
 
 def setup_logger(
@@ -14,60 +16,54 @@ def setup_logger(
 ) -> None:
     """
     Configure the logger with specified settings.
-    
+
+    Logs are written only to a rotating file — never to the console.
+
     Args:
         level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-        log_file: Path to log file, if None only logs to stderr
-        rotation: Log rotation size
+        log_file: Path to log file (defaults to logs/tubx.log)
+        rotation: Log file rotation threshold (default 100 MB circular)
         retention: Log retention period
         format_type: Format type ('json' or 'text')
     """
-    # Remove default handler
+    # Remove all default handlers (suppresses console output)
     logger.remove()
-    
-    # Define format
-    if format_type == "json":
-        log_format = (
-            "{{"
-            '"timestamp": "{time:YYYY-MM-DD HH:mm:ss.SSS}", '
-            '"level": "{level}", '
-            '"module": "{module}", '
-            '"function": "{function}", '
-            '"line": {line}, '
-            '"message": "{message}"'
-            "}}"
-        )
-    else:
-        log_format = (
-            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
-            "<level>{level: <8}</level> | "
-            "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
-            "<level>{message}</level>"
-        )
-    
-    # Add stderr handler
+
+    # JSON format for file logging
+    log_format = (
+        "{{" 
+        '"timestamp": "{time:YYYY-MM-DD HH:mm:ss.SSS}", '
+        '"level": "{level}", '
+        '"module": "{module}", '
+        '"function": "{function}", '
+        '"line": {line}, '
+        '"message": "{message}"'
+        "}}"
+    )
+
+    # Resolve log file path
+    resolved_log_file = log_file or _DEFAULT_LOG_FILE
+    log_path = Path(resolved_log_file)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # File-only sink with circular rotation at 100 MB
     logger.add(
-        sys.stderr,
+        resolved_log_file,
         format=log_format,
         level=level,
-        colorize=format_type == "text"
+        rotation=rotation,
+        retention=retention,
+        compression="zip",
+        enqueue=True,
     )
-    
-    # Add file handler if specified
-    if log_file:
-        log_path = Path(log_file)
-        log_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        logger.add(
-            log_file,
-            format=log_format,
-            level=level,
-            rotation=rotation,
-            retention=retention,
-            compression="zip"
-        )
-    
-    logger.info(f"Logger initialized with level={level}, format={format_type}")
+
+    logger.info(
+        f"Logger initialized with level={level}, "
+        f"log_file={resolved_log_file}, "
+        f"rotation={rotation}, "
+        f"retention={retention}, "
+        f"format_type={format_type}"
+    )
 
 
 def get_logger(name: str):
