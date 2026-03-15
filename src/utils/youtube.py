@@ -7,10 +7,10 @@ def get_video_id(url: str) -> str:
     Get the video identifier from a YouTube video URL.
 
     Args:
-        url (str): The YouTube video URL
+        url: The YouTube video URL
     
     Returns:
-        str: The video identifier
+        The video identifier
     """
     query = parse_qs(urlparse(url).query)
     return query["v"][0]
@@ -21,11 +21,11 @@ def get_full_transcript(url: str, language: str = "en") -> str:
     Get the full transcript of a YouTube video.
 
     Args:
-        url (str): The YouTube video URL
-        language (str, optional): The language of the transcript. Defaults to "en".
+        url: The YouTube video URL
+        language: Optional language of the transcript
     
     Returns:
-        str: The full transcript of the video
+        The full transcript of the video
     """
     video_id = get_video_id(url)
 
