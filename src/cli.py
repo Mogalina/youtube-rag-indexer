@@ -83,14 +83,14 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Add YouTube URLs to the job queue
-    add_p = subparsers.add_parser("add", help="Enqueue YouTube URLs for processing")
-    add_p.add_argument("urls", nargs="+", metavar="URL", help="YouTube video URL(s)")
+    add_parser = subparsers.add_parser("add", help="Enqueue YouTube URLs for processing")
+    add_parser.add_argument("urls", nargs="+", metavar="URL", help="YouTube video URL(s)")
 
     # Show job queue status and progress
-    subparsers.add_parser("status", help="Show job queue status and progress")
+    status_parser = subparsers.add_parser("status", help="Show job queue status and progress")
 
     # Start the background pipeline runner
-    subparsers.add_parser("run", help="Start the background pipeline runner")
+    run_parser = subparsers.add_parser("run", help="Start the background pipeline runner")
 
     # Parse arguments
     args = parser.parse_args()
