@@ -48,9 +48,9 @@ class Runner:
 
         # Load models once and share across worker threads
         logger.info("Loading summarizer model")
-        self._summarizer = Summarizer(self.config)
+        self._summarizer = Summarizer(config_path)
         logger.info("Loading embedder model")
-        self._embedder = Embedder(self.config)
+        self._embedder = Embedder(config_path)
         logger.info("Models loaded successfully")
 
     def start(self) -> None:
