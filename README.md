@@ -69,8 +69,28 @@ tubx stop
 
 Gracefully stops the background runner after it finishes its current job.
 
+**Ask a question:**
+
+```bash
+tubx ask "question"
+```
+
+Searches the indexed transcripts for relevant context and answers your question.
+
 ## Requirements
 
 - `Python` 3.10 or later
-- `PyTorch` (with optional `MPS` or `CUDA` support)
 - Internet access for initial transcript fetching and model downloading (local model caching supported thereafter)
+
+### Hardware Specifications
+
+| Component      | Minimum | Recommended |
+|----------------|---------|-------------|
+| **RAM**        | 8 GB    | 16 GB       |
+| **GPU VRAM**   | 4 GB    | 8 GB        |
+| **Disk Space** | 15 GB   | 30 GB       |
+
+The system uses three models:
+1. **Summarizer**: `google/flan-t5-small` (~300MB)
+2. **Embedder**: `google/embedding-gemma-300m` (~600MB)
+3. **Answering**: `microsoft/phi-2` (~5GB)
