@@ -4,6 +4,10 @@ import warnings
 from pathlib import Path
 from huggingface_hub import snapshot_download
 from huggingface_hub.errors import GatedRepoError, RepositoryNotFoundError
+from huggingface_hub.utils import logging as hf_logging
+
+# Suppress Hugging Face hub warnings
+hf_logging.set_verbosity_error()
 
 from rich.console import Console
 from rich.live import Live
