@@ -51,3 +51,13 @@ logging:
   retention: "30 days"
   # Minimum log level to record
   level: "INFO"
+
+chat:
+  # HuggingFace model for the answering model
+  model_id: "microsoft/phi-2"
+  # Local directory where the model will be cached after download
+  local_model_dir: "./models/phi-2"
+  # Maximum new tokens to generate for the answer
+  max_new_tokens: 256
+  # Number of top results to retrieve from FAISS for context
+  top_k: 5
