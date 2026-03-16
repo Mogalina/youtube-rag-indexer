@@ -41,6 +41,14 @@ Each worker runs the full pipeline:
 
 When the pipeline finishes, the job is marked `done`. If an error occurs, it is marked `failed`.
 
+### Ask (`tubx ask`)
+
+A synchronous retrieval-augmented generation (RAG) flow:
+1. **Question** is passed to the CLI.
+2. **Embedder** converts the question to a vector.
+3. **Searcher** finds the most relevant transcript chunks in FAISS.
+4. **ChatEngine** (`microsoft/phi-2`) generates an answer based on the retrieved context.
+
 ## Component Reference
 
 ### src/cli.py
@@ -90,6 +98,14 @@ Wraps `google/embedding-gemma-300m` via **Hugging Face Transformers**. Texts are
 
 Implements the full per-job processing function `process_job()`. Updates the job's `step` field in the queue at each stage so `tubx status` accurately reflects in-progress state. Also provides `_chunk_text()` for splitting summaries into overlapping chunks before embedding, and `_save_to_faiss()` for atomically appending to the on-disk FAISS index and metadata store.
 
+### src/pipeline/chat.py
+
+Wraps `microsoft/phi-2` (2.7B parameters). It implements a local answering engine that uses an "Instruction" prompt format to ground the model's response in the provided context. It uses `torch.float16` on CUDA devices for performance and memory efficiency.
+
+### src/pipeline/searcher.py
+
+Provides similarity search functionality for the FAISS index. It performs lazy loading of the index and metadata store to minimize startup time for non-search commands.
+
 ### src/pipeline/runner.py
 
 Manages the `ThreadPoolExecutor` and a single daemon polling thread. The poll loop calls `claim_next()` to atomically mark a job as `processing`, then submits it to the executor. Completed futures are reaped on every loop iteration. `SIGINT` and `SIGTERM` are intercepted to trigger a graceful shutdown sequence: the stop event is set, the executor waits for all in-flight futures to resolve, and the process exits cleanly.
@@ -106,7 +122,14 @@ Manages the `ThreadPoolExecutor` and a single daemon polling thread. The poll lo
 8. `_save_to_faiss()`: Append to index.faiss + metadata.pkl
 9. `queue.update_job(done)`: UPDATE status=done, step=done
 
-On any exception: `queue.update_job(failed, error=str(e))`.
+**Question Answering Flow:**
+
+1. `input`: User question string
+2. `embedder.embed()`: Convert question to vector
+3. `searcher.search()`: Query FAISS for top-K results
+4. `context`: Format retrieved chunks into a prompt
+5. `chat.answer()`: Generate response using Phi-2
+6. `output`: Printed answer panel in terminal
 
 ## Concurrency Model
 
@@ -145,4 +168,10 @@ logging:
   rotation: string          # Rotation threshold
   retention: string         # Archive retention
   level: string             # Minimum log level
+
+chat:
+  model_id: string          # HuggingFace model ID for the chat model
+  local_model_dir: path     # Local cache directory
+  max_new_tokens: int       # Generation limit
+  top_k: int                # Context chunks to retrieve
 ```

@@ -9,19 +9,16 @@ performance benchmarks, and the design decisions that govern each stage.
 Every URL submitted to youtube-rag-indexer passes through seven discrete states:
 
 1. **Enqueued (`pending`)**  
-   When a user adds a YouTube URL, a new job is inserted into the queue with the 
-   status `pending`.
+   When a user adds a YouTube URL, a new job is inserted into the queue with the status `pending`.
 
 2. **Claimed (`processing`)**  
-   The runner claims the job and assigns it to a worker thread. The job status 
-   becomes `processing`, and the pipeline begins.
+   The runner claims the job and assigns it to a worker thread. The job status becomes `processing`, and the pipeline begins.
 
 3. **Fetching step**  
    The worker retrieves the transcript for the YouTube video.
 
 4. **Summarizing step**  
-   The transcript is summarized into shorter text segments suitable for downstream 
-   processing.
+   The transcript is summarized into shorter text segments suitable for downstream processing.
 
 5. **Embedding step**  
    The summarized text chunks are converted into vector embeddings.
@@ -30,12 +27,9 @@ Every URL submitted to youtube-rag-indexer passes through seven discrete states:
    The embeddings and their associated metadata are appended to the vector index.
 
 7. **Done step (`done`)**  
-   If the pipeline finishes successfully, the job status is set to `done` and the 
-   step is marked as `done`. If an error occurs at any stage, the job is marked 
-   `failed`.
+   If the pipeline finishes successfully, the job status is set to `done` and the step is marked as `done`. If an error occurs at any stage, the job is marked `failed`.
 
-The `step` column in the job queue provides fine-grained visibility into which stage is currently executing. The `tubx status` command reads this column live and 
-displays it in the jobs table.
+The `step` column in the job queue provides fine-grained visibility into which stage is currently executing. The `tubx status` command reads this column live and displays it in the jobs table.
 
 ## Stage 1: Transcript Fetching
 
@@ -184,6 +178,43 @@ indexed vector:
 The position of each entry in the list corresponds to the FAISS internal vector ID,
 enabling exact text retrieval from a similarity search result. A size guard 
 (`database.max_size_gb`) prevents the index from exceeding the configured disk budget.
+
+## Answering Workflow (RAG)
+
+The `tubx ask` command implements a Retrieval-Augmented Generation flow:
+
+1. **Retrieval**: The question is embedded using the same `Embedder` as the indexing 
+pipeline. The resulting vector is used to perform a similarity search in the FAISS 
+index to find the top-K most relevant chunks.
+2. **Augmentation**: The retrieved text chunks are formatted into a context block.
+3. **Generation**: The question and context are passed to the `microsoft/phi-2` model 
+using an instruction-based prompt template.
+4. **Display**: The generated answer is displayed in a formatted panel in the 
+terminal.
+
+### Answer Generation Model
+
+**Phi-2** is a 2.7 billion-parameter small language model (SLM) developed 
+by Microsoft. Despite its compact size, it demonstrates reasoning and language 
+understanding capabilities that often match or exceed models with 7B+ or even 13B+ 
+parameters.
+
+**Model specifications:**
+
+| Property        | Value                              |
+|-----------------|------------------------------------|
+| Architecture    | Transformer (next-word prediction) |
+| Parameters      | 2.7 billion                        |
+| Context window  | 2,048 tokens                       |
+| VRAM (FP16)     | ~5.2 GB                            |
+| Training Tokens | 1.4 trillion                       |
+| License         | MIT                                |
+
+**Implementation in this project:**
+
+The model is loaded with `trust_remote_code=True` to support the specific Phi-2 
+architecture. On CUDA devices, it automatically uses `torch.float16` to reduce 
+memory footprint.
 
 ## Chunking Strategy
 
