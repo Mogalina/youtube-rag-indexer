@@ -51,7 +51,23 @@ Displays a progress bar and a formatted table of all jobs with their current sta
 tubx run
 ```
 
-Loads the summarization and embedding models into memory once, then continuously processes queued jobs using a configurable thread pool.
+Loads the summarization and embedding models into memory once, then continuously processes queued jobs using a configurable thread pool. 
+
+**Run in background:**
+
+```bash
+tubx run --daemon
+```
+
+Starts the runner in the background and saves its process ID (PID). You can safely close your terminal.
+
+**Stop the background runner:**
+
+```bash
+tubx stop
+```
+
+Gracefully stops the background runner after it finishes its current job.
 
 ## Requirements
 

@@ -1,12 +1,17 @@
 from pathlib import Path
 from typing import Union
 
+import os
 import torch
-from transformers import AutoTokenizer, T5ForConditionalGeneration
+from transformers import AutoTokenizer, T5ForConditionalGeneration, logging
 
 from utils.logger import get_logger
 from utils.config import load_config
 
+
+# Suppress Hugging Face output
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+logging.set_verbosity_error()
 
 logger = get_logger(__name__)
 

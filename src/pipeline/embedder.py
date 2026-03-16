@@ -1,14 +1,19 @@
 from pathlib import Path
 from typing import Union
 
+import os
 import numpy as np
 import torch
 
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoTokenizer, logging
 
 from utils.logger import get_logger
 from utils.config import load_config
 
+
+# Suppress Hugging Face output
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+logging.set_verbosity_error()
 
 logger = get_logger(__name__)
 
