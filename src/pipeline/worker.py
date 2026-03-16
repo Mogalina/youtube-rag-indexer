@@ -160,7 +160,7 @@ def process_job(
         _save_to_faiss(video_id, chunks, vectors, config)
 
         # Mark as done
-        queue.update_job(job_id, STATUS_DONE, step="saving")
+        queue.update_job(job_id, STATUS_DONE, step="done")
         logger.info(f"Job {job_id} done: {url}")
 
     except Exception as e:

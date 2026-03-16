@@ -104,7 +104,7 @@ Manages the `ThreadPoolExecutor` and a single daemon polling thread. The poll lo
 6. `summarizer.summarize()`: Local inference (FLAN-T5-small)
 7. `embedder.embed()`: Local inference (embedding-gemma-300m)
 8. `_save_to_faiss()`: Append to index.faiss + metadata.pkl
-9. `queue.update_job(done)`: UPDATE status=done
+9. `queue.update_job(done)`: UPDATE status=done, step=done
 
 On any exception: `queue.update_job(failed, error=str(e))`.
 

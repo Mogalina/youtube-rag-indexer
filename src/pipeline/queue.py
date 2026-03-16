@@ -18,7 +18,13 @@ STATUS_DONE = "done"
 STATUS_FAILED = "failed"
 
 # Processing steps (in order)
-STEPS = ["fetching", "summarizing", "embedding", "saving"]
+STEPS = [
+    "fetching", 
+    "summarizing", 
+    "embedding", 
+    "saving",
+    "done"
+]
 
 # Create table schema
 CREATE_TABLE_SQL = """

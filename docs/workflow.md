@@ -6,7 +6,7 @@ performance benchmarks, and the design decisions that govern each stage.
 
 ## Job Lifecycle
 
-Every URL submitted to youtube-rag-indexer passes through six discrete states:
+Every URL submitted to youtube-rag-indexer passes through seven discrete states:
 
 1. **Enqueued (`pending`)**  
    When a user adds a YouTube URL, a new job is inserted into the queue with the 
@@ -29,12 +29,12 @@ Every URL submitted to youtube-rag-indexer passes through six discrete states:
 6. **Saving step**  
    The embeddings and their associated metadata are appended to the vector index.
 
-7. **Completion**  
-   If the pipeline finishes successfully, the job is marked `done`. If an error 
-   occurs at any stage, the job is marked `failed`.
+7. **Done step (`done`)**  
+   If the pipeline finishes successfully, the job status is set to `done` and the 
+   step is marked as `done`. If an error occurs at any stage, the job is marked 
+   `failed`.
 
-The `step` column in the job queue provides fine-grained visibility into which stage 
- is currently executing. The `tubx status` command reads this column live and 
+The `step` column in the job queue provides fine-grained visibility into which stage is currently executing. The `tubx status` command reads this column live and 
 displays it in the jobs table.
 
 ## Stage 1: Transcript Fetching
