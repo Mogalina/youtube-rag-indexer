@@ -59,7 +59,7 @@ Loads the summarization and embedding models into memory once, then continuously
 tubx run --daemon
 ```
 
-Starts the runner in the background and saves its process ID (PID). You can safely close your terminal.
+Starts the runner in the background and saves its process identifier. You can safely close your terminal.
 
 **Stop the background runner:**
 
