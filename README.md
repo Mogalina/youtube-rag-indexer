@@ -23,6 +23,9 @@ source venv/bin/activate
 
 # Install dependencies
 pip install -e .
+
+# Download required models
+tubx download-models
 ```
 
 The `pip install -e .` step registers the `tubx` command globally within the virtual environment.

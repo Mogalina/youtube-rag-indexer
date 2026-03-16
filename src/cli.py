@@ -5,6 +5,11 @@ import subprocess
 import sys
 import time
 
+# Suppress Hugging Face output and fix OpenMP duplicate library crash
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ["TQDM_DISABLE"] = "1"
+
 from utils.logger import setup_logger, get_logger
 from utils.config import load_config, PROJECT_ROOT
 from utils.cli import get_queue, print_status
@@ -24,11 +29,6 @@ logger = get_logger(__name__)
 
 # Process identifier file for the background runner
 PID_FILE = PROJECT_ROOT / "logs" / "tubx_runner.pid"
-
-# Suppress Hugging Face output and fix OpenMP duplicate library crash
-os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-os.environ["TQDM_DISABLE"] = "1"
 
 
 def cmd_add(args, config: dict) -> None:
@@ -266,7 +266,13 @@ def cmd_download(args, config: dict) -> None:
         args: Command-line arguments
         config: Configuration dictionary
     """
-    print("Checking and downloading models...")
+    logging_config = config.get("logging", {})
+    setup_logger(
+        level="ERROR",
+        log_file=logging_config.get("log_file"),
+    )
+
+    console = Console()
 
     # Download summary model
     download_model(
@@ -286,7 +292,7 @@ def cmd_download(args, config: dict) -> None:
         local_dir=config["chat"]["local_model_dir"],
     )
 
-    print("All models downloaded successfully.")
+    console.print("[bold green]All models downloaded successfully.[/bold green]")
 
 
 def main() -> None:
