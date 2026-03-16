@@ -21,7 +21,9 @@ dependencies = [
     "torch",
     "faiss-cpu",
     "numpy",
-    "rich"
+    "rich",
+    "einops",
+    "accelerate"
 ]
 
 [project.scripts]

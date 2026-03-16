@@ -9,11 +9,19 @@ from utils.logger import setup_logger, get_logger
 from utils.config import load_config, PROJECT_ROOT
 from utils.cli import get_queue, print_status
 from pipeline.runner import Runner
+from pipeline.embedder import Embedder
+from pipeline.searcher import Searcher
+from pipeline.chat import ChatEngine
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.live import Live
+from rich.spinner import Spinner
 
 
 logger = get_logger(__name__)
 
-# Process ID file for the background runner
+# Process identifier file for the background runner
 PID_FILE = PROJECT_ROOT / "logs" / "tubx_runner.pid"
 
 
@@ -167,6 +175,83 @@ def cmd_stop(args, config: dict) -> None:
             PID_FILE.unlink()
 
 
+def cmd_ask(args, config: dict) -> None:
+    """
+    Answer a question using the indexed content.
+
+    Args:
+        args: Command-line arguments
+        config: Configuration dictionary
+    """
+    # Set up console for interactive mode
+    console = Console()
+
+    # Set up logging
+    logging_config = config.get("logging", {})
+    setup_logger(
+        level="ERROR",
+        log_file=logging_config.get("log_file"),
+    )
+
+    # Get question and chat configuration
+    question = args.question
+    chat_config = config.get("chat", {})
+    top_k = chat_config.get("top_k", 5)
+
+    # Live spinner for search
+    with Live(
+        Spinner(
+            "dots", 
+            text="[bold blue]Searching index..."
+        ), 
+        refresh_per_second=10, 
+        console=console
+    ) as live:
+        try:
+            # Embed question
+            embedder = Embedder()
+            query_vector = embedder.embed(question)
+
+            # Search for index
+            searcher = Searcher()
+            results = searcher.search(query_vector, top_k=top_k)
+
+            # Check if results were found
+            if not results:
+                live.update(Panel(
+                    "[red]No relevant information found in the index.[/]",
+                    title="Result"
+                ))
+                return
+
+            # Prepare context
+            context_parts = []
+            for res in results:
+                context_parts.append(f"Video {res['video_id']}: {res['text']}")
+            context = "\n\n".join(context_parts)
+
+            # Generate answer
+            live.update(Spinner(
+                "dots", 
+                text="[bold green]Generating answer..."
+            ))
+            chat = ChatEngine()
+            answer = chat.answer(question, context)
+
+            # Show result
+            live.update(Panel(
+                answer,
+                title=f"Answer (based on {len(results)} sources)",
+                border_style="green"
+            ))
+            
+        except FileNotFoundError as e:
+            live.update(Panel(f"[red]{str(e)}[/]", title="Error"))
+        except Exception as e:
+            logger.exception("Ask command failed")
+            live.update(Panel(f"[red]Error: {str(e)}[/]", title="Error"))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="YouTube Indexer",
@@ -189,6 +274,10 @@ def main() -> None:
     # Stop the background runner
     subparsers.add_parser("stop", help="Stop the background runner")
 
+    # Ask a question based on indexed content
+    ask_parser = subparsers.add_parser("ask", help="Ask a question about your indexed videos")
+    ask_parser.add_argument("question", help="The question you want to ask")
+
     # Parse arguments
     args = parser.parse_args()
     config = load_config()
@@ -202,6 +291,8 @@ def main() -> None:
         cmd_run(args, config)
     elif args.command == "stop":
         cmd_stop(args, config)
+    elif args.command == "ask":
+        cmd_ask(args, config)
 
 
 if __name__ == "__main__":
