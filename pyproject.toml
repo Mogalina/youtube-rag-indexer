@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.scripts]
-tubx = "youtube_rag_indexer.cli:main"
+tubx = "main:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
