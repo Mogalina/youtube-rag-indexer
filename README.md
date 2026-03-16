@@ -2,15 +2,35 @@
 
 ## Overview
 
-YouTube Indexer is a locally executed pipeline for transforming YouTube video content into a searchable semantic knowledge base. Given one or more YouTube video URLs, the system fetches transcripts, summarizes them using a compact instruction-tuned language model, embeds the summaries into dense vector representations, and stores them in a persistent **Facebook AI Similarity Search** (`FAISS`) index. The result is a structured, queryable repository of video knowledge that runs entirely on the local machine without requiring external API calls for inference.
+YouTube Indexer is a locally executed pipeline for transforming YouTube video 
+content into a searchable semantic knowledge base. Given one or more YouTube 
+video URLs, the system fetches transcripts, summarizes them using a compact 
+instruction-tuned language model, embeds the summaries into dense vector 
+representations, and stores them in a persistent **Facebook AI Similarity Search** 
+(`FAISS`) index. The result is a structured, queryable repository of video 
+knowledge that runs entirely on the local machine without requiring external API 
+calls for inference.
 
-The project is designed for researchers, developers, and content analysts who need to index large collections of YouTube content for downstream **retrieval-augmented generation** (`RAG`) workflows, semantic search, or question-answering systems. All inference is performed locally using open-weights models from **Hugging Face**, making the system suitable for air-gapped or privacy-sensitive environments.
+The project is designed for researchers, developers, and content analysts who 
+need to index large collections of YouTube content for downstream **retrieval-augmented 
+generation** (`RAG`) workflows, semantic search, or question-answering systems. All 
+inference is performed locally using open-weights models from **Hugging Face**, 
+making the system suitable for air-gapped or privacy-sensitive environments.
 
 ## Motivation
 
-Public video platforms produce an enormous volume of spoken information. YouTube alone hosts hundreds of millions of hours of content across lectures, technical talks, interviews, and tutorials. Despite this, the content remains largely unsearchable at a semantic level. YouTube Indexer addresses this gap by providing a lightweight, extensible indexing pipeline that converts spoken content into dense vector embeddings amenable to similarity search.
+Public video platforms produce an enormous volume of spoken information. YouTube 
+alone hosts hundreds of millions of hours of content across lectures, technical 
+talks, interviews, and tutorials. Despite this, the content remains largely 
+unsearchable at a semantic level. YouTube Indexer addresses this gap by providing 
+a lightweight, extensible indexing pipeline that converts spoken content into 
+dense vector embeddings amenable to similarity search.
 
 ## Installation
+
+> **Note**: You need to login to Hugging Face CLI before running the installation. 
+> Make sure you have accepted the terms and conditions of the models you are 
+> about to download.
 
 ```bash
 # Clone the repository
@@ -28,7 +48,8 @@ pip install -e .
 tubx download-models
 ```
 
-The `pip install -e .` step registers the `tubx` command globally within the virtual environment.
+The `pip install -e .` step registers the `tubx` command globally within the 
+virtual environment.
 
 ## Usage
 
@@ -46,7 +67,9 @@ tubx add https://www.youtube.com/watch?v=<video_id>
 tubx status
 ```
 
-Displays a progress bar and a formatted table of all jobs with their current status (`pending`, `processing`, `done`, `failed`), current processing step, and last update timestamp.
+Displays a progress bar and a formatted table of all jobs with their current 
+status (`pending`, `processing`, `done`, `failed`), current processing step, 
+and last update timestamp.
 
 **Start the processing pipeline:**
 
@@ -54,7 +77,8 @@ Displays a progress bar and a formatted table of all jobs with their current sta
 tubx run
 ```
 
-Loads the summarization and embedding models into memory once, then continuously processes queued jobs using a configurable thread pool. 
+Loads the summarization and embedding models into memory once, then continuously 
+processes queued jobs using a configurable thread pool. 
 
 **Run in background:**
 
@@ -62,7 +86,8 @@ Loads the summarization and embedding models into memory once, then continuously
 tubx run --daemon
 ```
 
-Starts the runner in the background and saves its process identifier. You can safely close your terminal.
+Starts the runner in the background and saves its process identifier. You can 
+safely close your terminal.
 
 **Stop the background runner:**
 
@@ -86,12 +111,14 @@ Searches the indexed transcripts for relevant context and answers your question.
 tubx download-models
 ```
 
-Downloads all configured models (Summarizer, Embedder, Chat) to their respective local directories for offline use.
+Downloads all configured models (Summarizer, Embedder, Chat) to their respective 
+local directories for offline use.
 
 ## Requirements
 
 - `Python` 3.10 or later
-- Internet access for initial transcript fetching and model downloading (local model caching supported thereafter)
+- Internet access for initial transcript fetching and model downloading (local 
+model caching supported thereafter)
 
 ### Hardware Specifications
 
