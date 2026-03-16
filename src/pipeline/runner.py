@@ -99,15 +99,13 @@ class Runner:
 
     def _handle_signal(
         self, 
-        signum: int, 
-        frame: FrameType
+        signum: int
     ) -> None:
         """
         Handle signals for graceful shutdown.
         
         Args:
             signum: Signal number
-            frame: Frame object
         """
         logger.info(f"\nSignal {signum} received")
         self.stop()
