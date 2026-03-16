@@ -34,7 +34,7 @@ All interaction occurs through the `tubx` command-line interface.
 **Add videos to the queue:**
 
 ```bash
-tubx add https://www.youtube.com/watch?v=<VIDEO_ID>
+tubx add https://www.youtube.com/watch?v=<video_id>
 ```
 
 **Inspect queue status:**
@@ -72,7 +72,7 @@ Gracefully stops the background runner after it finishes its current job.
 **Ask a question:**
 
 ```bash
-tubx ask "question"
+tubx ask <question>
 ```
 
 Searches the indexed transcripts for relevant context and answers your question.
