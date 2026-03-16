@@ -12,6 +12,7 @@ from utils.config import load_config
 # Suppress Hugging Face output
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 logging.set_verbosity_error()
+logging.disable_progress_bar()
 
 logger = get_logger(__name__)
 
