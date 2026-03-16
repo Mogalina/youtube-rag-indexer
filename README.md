@@ -77,6 +77,14 @@ tubx ask <question>
 
 Searches the indexed transcripts for relevant context and answers your question.
 
+**Download models locally:**
+
+```bash
+tubx download-models
+```
+
+Downloads all configured models (Summarizer, Embedder, Chat) to their respective local directories for offline use.
+
 ## Requirements
 
 - `Python` 3.10 or later

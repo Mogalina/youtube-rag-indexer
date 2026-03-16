@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 class ChatEngine:
     """
-    Local Question Answering engine using question answering small language model 
+    Local question answering engine using question answering small language model 
     with context.
 
     Uses local embedding model to embed the question and then uses the embedding

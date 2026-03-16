@@ -12,6 +12,7 @@ from pipeline.runner import Runner
 from pipeline.embedder import Embedder
 from pipeline.searcher import Searcher
 from pipeline.chat import ChatEngine
+from utils.download_model import download_model
 
 from rich.console import Console
 from rich.panel import Panel
@@ -87,7 +88,7 @@ def cmd_run(args, config: dict) -> None:
         # Check if the runner is already running
         if PID_FILE.exists():
             try:
-                # Get the PID from the file
+                # Get the process identifier from the file
                 pid = int(PID_FILE.read_text().strip())
                 
                 # Check if the process is still running
@@ -96,7 +97,7 @@ def cmd_run(args, config: dict) -> None:
                 print(f"Runner is already up and running: {pid}")
                 return
             except (ProcessLookupError, ValueError):
-                # Clean up the stale PID file
+                # Clean up the stale process identifier file
                 PID_FILE.unlink()
 
         # Launch in background
@@ -257,6 +258,37 @@ def cmd_ask(args, config: dict) -> None:
             live.update(Panel(f"[red]Error: {str(e)}[/]", title="Error"))
 
 
+def cmd_download(args, config: dict) -> None:
+    """
+    Download all models defined in the configuration.
+    
+    Args:
+        args: Command-line arguments
+        config: Configuration dictionary
+    """
+    print("Checking and downloading models...")
+
+    # Download summary model
+    download_model(
+        model_id=config["summary"]["model_id"],
+        local_dir=config["summary"]["local_model_dir"],
+    )
+    
+    # Download embedding model
+    download_model(
+        model_id=config["embedding"]["model_id"],
+        local_dir=config["embedding"]["local_model_dir"],
+    )
+    
+    # Download chat model
+    download_model(
+        model_id=config["chat"]["model_id"],
+        local_dir=config["chat"]["local_model_dir"],
+    )
+
+    print("All models downloaded successfully.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="YouTube Indexer",
@@ -283,6 +315,9 @@ def main() -> None:
     ask_parser = subparsers.add_parser("ask", help="Ask a question about your indexed videos")
     ask_parser.add_argument("question", help="The question you want to ask")
 
+    # Download models locally
+    subparsers.add_parser("download-models", help="Download all models locally")
+
     # Parse arguments
     args = parser.parse_args()
     config = load_config()
@@ -298,6 +333,8 @@ def main() -> None:
         cmd_stop(args, config)
     elif args.command == "ask":
         cmd_ask(args, config)
+    elif args.command == "download-models":
+        cmd_download(args, config)
 
 
 if __name__ == "__main__":
